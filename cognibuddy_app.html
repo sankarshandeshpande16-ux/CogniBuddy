@@ -2,1431 +2,1543 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>CogniBuddy</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #4F46E5;
-    --primary-light: #EEF2FF;
-    --primary-mid: #818CF8;
-    --accent: #F59E0B;
-    --accent-light: #FEF3C7;
-    --success: #10B981;
-    --success-light: #D1FAE5;
-    --danger: #EF4444;
-    --danger-light: #FEE2E2;
-    --study: #6366F1;
-    --study-light: #EEF2FF;
-    --play: #F59E0B;
-    --play-light: #FFFBEB;
-    --bg: #F8F7FF;
-    --surface: #FFFFFF;
-    --surface2: #F3F4F6;
-    --text: #1E1B4B;
-    --text2: #6B7280;
-    --text3: #9CA3AF;
-    --border: #E5E7EB;
-    --radius: 16px;
-    --radius-sm: 10px;
-    --shadow: 0 4px 20px rgba(79,70,229,0.08);
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-  }
+/* ============================================================
+   DESIGN SYSTEM — warm dark, playful, kid-friendly tech
+   Primary: deep navy | Accent: vivid coral-orange | Glow: teal
+   ============================================================ */
+:root {
+  --bg:         #0D1117;
+  --surface:    #161B22;
+  --surface2:   #1E2530;
+  --surface3:   #252D3A;
+  --border:     rgba(255,255,255,0.07);
+  --border2:    rgba(255,255,255,0.13);
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  --coral:      #FF6B4A;
+  --coral-dim:  rgba(255,107,74,0.15);
+  --coral-glow: rgba(255,107,74,0.35);
+  --teal:       #00D4B4;
+  --teal-dim:   rgba(0,212,180,0.12);
+  --teal-glow:  rgba(0,212,180,0.3);
+  --amber:      #FFB830;
+  --amber-dim:  rgba(255,184,48,0.12);
+  --purple:     #9B7FFF;
+  --purple-dim: rgba(155,127,255,0.15);
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 0;
-  }
+  --text:       #F0F4F8;
+  --text2:      #8B95A2;
+  --text3:      #4A5568;
 
-  .phone-frame {
-    width: 390px;
-    min-height: 844px;
-    background: var(--surface);
-    border-radius: 40px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(79,70,229,0.2), 0 0 0 8px #1E1B4B;
-    margin: 24px auto;
-    display: flex;
-    flex-direction: column;
-  }
+  --radius:     18px;
+  --radius-sm:  12px;
+  --radius-xs:  8px;
 
-  .status-bar {
-    background: var(--surface);
-    padding: 14px 24px 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text);
-    flex-shrink: 0;
-  }
+  --font-display: 'Fredoka One', cursive;
+  --font-body:    'DM Sans', sans-serif;
+}
 
-  .status-icons { display: flex; gap: 6px; align-items: center; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
-  .screen.active { display: flex; }
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: var(--font-body);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* ======= SPLASH SCREEN ======= */
-  #splash {
-    background: linear-gradient(145deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%);
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-  }
+/* ---- SCREENS ---- */
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  overflow: hidden;
+}
+.screen.active { opacity: 1; pointer-events: all; }
 
-  .robot-face {
-    width: 140px;
-    height: 140px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255,255,255,0.3);
-    animation: float 3s ease-in-out infinite;
-  }
+/* ---- SCROLLABLE BODY ---- */
+.scroll-body {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-body::-webkit-scrollbar { display: none; }
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
+/* ============================================================
+   SPLASH
+   ============================================================ */
+#splash {
+  background: var(--bg);
+  align-items: center; justify-content: center;
+  gap: 0;
+}
 
-  .eyes { display: flex; gap: 20px; margin-bottom: 8px; }
-  .eye {
-    width: 24px; height: 28px;
-    background: white;
-    border-radius: 50%;
-    position: relative;
-    animation: blink 4s ease-in-out infinite;
-  }
-  @keyframes blink {
-    0%, 90%, 100% { transform: scaleY(1); }
-    95% { transform: scaleY(0.1); }
-  }
-  .eye::after {
-    content: '';
-    width: 10px; height: 12px;
-    background: #1E1B4B;
-    border-radius: 50%;
-    position: absolute;
-    top: 6px; left: 7px;
-  }
-  .mouth {
-    width: 40px; height: 18px;
-    background: white;
-    border-radius: 0 0 20px 20px;
-    margin: 0 auto;
-  }
-  .robot-inner { text-align: center; }
-  .app-name {
-    font-size: 36px;
-    font-weight: 900;
-    color: white;
-    letter-spacing: -1px;
-  }
-  .app-tagline { font-size: 15px; color: rgba(255,255,255,0.7); margin-top: 4px; }
-  .splash-btn {
-    margin-top: 48px;
-    background: white;
-    color: var(--primary);
-    border: none;
-    padding: 16px 48px;
-    border-radius: 50px;
-    font-size: 17px;
-    font-weight: 800;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .splash-btn:active { transform: scale(0.96); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.splash-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,212,180,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,107,74,0.1) 0%, transparent 60%);
+}
 
-  /* ======= BLUETOOTH SCREEN ======= */
-  #bluetooth { background: var(--bg); }
+.splash-content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center; padding: 40px 32px;
+  width: 100%;
+}
 
-  .screen-header {
-    background: var(--surface);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .back-btn {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--surface2);
-    border: none;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    transition: background 0.15s;
-  }
-  .back-btn:active { background: var(--border); }
-  .screen-title { font-size: 18px; font-weight: 800; color: var(--text); }
+/* Robot SVG face */
+.robot-wrap {
+  width: 140px; height: 140px;
+  background: var(--surface2);
+  border-radius: 36px;
+  border: 2px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 28px;
+  animation: floatY 3.5s ease-in-out infinite;
+  box-shadow: 0 0 40px rgba(0,212,180,0.2);
+}
+@keyframes floatY {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
 
-  .bt-hero {
-    background: linear-gradient(135deg, #4F46E5, #7C3AED);
-    margin: 20px;
-    border-radius: var(--radius);
-    padding: 28px;
-    text-align: center;
-    color: white;
-  }
-  .bt-icon { font-size: 48px; margin-bottom: 12px; }
-  .bt-hero h2 { font-size: 20px; font-weight: 800; }
-  .bt-hero p { font-size: 14px; opacity: 0.8; margin-top: 6px; }
+.r-face { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.r-eyes { display: flex; gap: 18px; }
+.r-eye {
+  width: 22px; height: 26px;
+  background: var(--teal);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--teal-glow);
+  animation: blink 5s ease-in-out infinite;
+}
+@keyframes blink {
+  0%,88%,100% { transform: scaleY(1); }
+  92%          { transform: scaleY(0.08); }
+}
+.r-mouth {
+  width: 36px; height: 16px;
+  background: var(--coral);
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 0 8px var(--coral-glow);
+}
 
-  .status-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 16px; border-radius: 50px;
-    font-size: 13px; font-weight: 700;
-    margin-top: 14px;
-  }
-  .status-pill.connected { background: rgba(16,185,129,0.2); color: #6EE7B7; }
-  .status-pill.disconnected { background: rgba(239,68,68,0.2); color: #FCA5A5; }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-  .status-dot.pulse { animation: pulse 1.5s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.splash-title {
+  font-family: var(--font-display);
+  font-size: 44px; letter-spacing: 1px;
+  color: var(--text);
+  line-height: 1;
+}
+.splash-title span { color: var(--teal); }
 
-  .section-label {
-    font-size: 12px; font-weight: 700; color: var(--text3);
-    text-transform: uppercase; letter-spacing: 0.8px;
-    padding: 0 20px; margin-bottom: 8px; margin-top: 20px;
-  }
-  .device-list { padding: 0 20px; display: flex; flex-direction: column; gap: 8px; }
-  .device-item {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .device-item:active { background: var(--surface2); }
-  .device-item.selected { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
-  .device-info { display: flex; align-items: center; gap: 12px; }
-  .device-icon {
-    width: 40px; height: 40px;
-    background: var(--primary-light);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-  }
-  .device-name { font-size: 15px; font-weight: 700; color: var(--text); }
-  .device-mac { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .device-signal { font-size: 12px; color: var(--success); font-weight: 600; }
+.splash-sub {
+  font-size: 15px; color: var(--text2);
+  margin-top: 8px; letter-spacing: 0.3px;
+}
 
-  .btn-primary {
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 16px;
-    font-size: 16px;
-    font-weight: 800;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    width: calc(100% - 40px);
-    margin: 20px;
-    transition: transform 0.15s, opacity 0.15s;
-  }
-  .btn-primary:active { transform: scale(0.97); opacity: 0.9; }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.splash-pills {
+  display: flex; gap: 10px; margin-top: 24px;
+  flex-wrap: wrap; justify-content: center;
+}
+.pill {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  display: flex; align-items: center; gap: 5px;
+}
 
-  .btn-danger {
-    background: var(--danger-light);
-    color: var(--danger);
-    border: none;
-    border-radius: 50px;
-    padding: 14px;
-    font-size: 15px;
-    font-weight: 700;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    width: calc(100% - 40px);
-    margin: 0 20px 20px;
-    transition: transform 0.15s;
-  }
-  .btn-danger:active { transform: scale(0.97); }
+.btn-start {
+  margin-top: 36px;
+  width: 100%; max-width: 320px;
+  padding: 18px;
+  background: var(--coral);
+  color: white;
+  border: none; border-radius: 50px;
+  font-family: var(--font-display);
+  font-size: 20px; letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 8px 28px var(--coral-glow);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-start:active { transform: scale(0.96); box-shadow: 0 4px 14px var(--coral-glow); }
 
-  /* ======= HOME SCREEN ======= */
-  #home { background: var(--bg); }
+/* ============================================================
+   SHARED HEADER
+   ============================================================ */
+.app-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0; z-index: 10;
+}
+.hdr-back {
+  width: 38px; height: 38px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; color: var(--text);
+  transition: background 0.15s;
+}
+.hdr-back:active { background: var(--surface3); }
+.hdr-title {
+  font-family: var(--font-display);
+  font-size: 22px; color: var(--text); flex: 1;
+}
+.hdr-badge {
+  padding: 5px 13px; border-radius: 50px;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 5px;
+}
+.hdr-badge.on  { background: rgba(0,212,180,0.15); color: var(--teal); }
+.hdr-badge.off { background: rgba(255,107,74,0.12); color: var(--coral); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.dot.pulse { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  .home-header {
-    background: var(--surface);
-    padding: 16px 20px 20px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .home-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .greeting { font-size: 13px; color: var(--text2); font-weight: 600; }
-  .greeting span { display: block; font-size: 22px; font-weight: 900; color: var(--text); }
-  .conn-badge {
-    display: flex; align-items: center; gap: 6px;
-    background: var(--success-light);
-    color: #059669;
-    padding: 6px 14px;
-    border-radius: 50px;
-    font-size: 12px; font-weight: 700;
-    cursor: pointer;
-  }
-  .conn-badge.off { background: var(--danger-light); color: var(--danger); }
-  .conn-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+/* ============================================================
+   SHARED BOTTOM NAV
+   ============================================================ */
+.bottom-nav {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex; flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bnav-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 10px 0; cursor: pointer;
+  gap: 3px; transition: opacity 0.15s;
+}
+.bnav-item:active { opacity: 0.6; }
+.bnav-icon { font-size: 22px; line-height: 1; }
+.bnav-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 0.3px; }
+.bnav-item.active .bnav-label { color: var(--coral); }
+.bnav-item.active .bnav-icon { filter: drop-shadow(0 0 6px var(--coral)); }
 
-  .mode-toggle {
-    display: flex;
-    background: var(--surface2);
-    border-radius: 50px;
-    padding: 4px;
-    gap: 4px;
-  }
-  .mode-btn {
-    flex: 1;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 50px;
-    font-size: 14px;
-    font-weight: 800;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    color: var(--text2);
-    background: transparent;
-  }
-  .mode-btn.active.study { background: var(--study); color: white; box-shadow: var(--shadow-sm); }
-  .mode-btn.active.play { background: var(--play); color: white; box-shadow: var(--shadow-sm); }
+/* ============================================================
+   BLUETOOTH SCREEN
+   ============================================================ */
+#bluetooth {}
 
-  .home-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.bt-hero {
+  margin: 20px 18px 0;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.bt-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,212,180,0.08), transparent);
+}
+.bt-hero-icon { font-size: 52px; margin-bottom: 10px; }
+.bt-hero h2 { font-family: var(--font-display); font-size: 24px; color: var(--text); }
+.bt-hero p  { font-size: 13px; color: var(--text2); margin-top: 6px; }
 
-  .robot-status-card {
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 20px;
-    display: flex; align-items: center; gap: 16px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border);
-  }
-  .mini-robot {
-    width: 64px; height: 64px;
-    background: linear-gradient(135deg, #4F46E5, #7C3AED);
-    border-radius: 18px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .mini-eyes { display: flex; gap: 8px; }
-  .mini-eye {
-    width: 10px; height: 12px;
-    background: white; border-radius: 50%;
-  }
-  .robot-state { flex: 1; }
-  .robot-state h3 { font-size: 16px; font-weight: 800; color: var(--text); }
-  .robot-state p { font-size: 13px; color: var(--text2); margin-top: 3px; }
-  .oled-preview {
-    background: #1a1a2e;
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 12px;
-    font-family: 'Space Grotesk', monospace;
-    color: #a78bfa;
-    text-align: center;
-    margin-top: 10px;
-    letter-spacing: 0.5px;
-  }
+.status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 18px; border-radius: 50px;
+  font-size: 13px; font-weight: 700;
+  margin-top: 16px;
+}
+.status-pill.connected    { background: rgba(0,212,180,0.15); color: var(--teal); }
+.status-pill.disconnected { background: rgba(255,107,74,0.12); color: var(--coral); }
 
-  .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .action-card {
-    background: var(--surface);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    cursor: pointer;
-    border: 1.5px solid var(--border);
-    transition: all 0.15s;
-    box-shadow: var(--shadow-sm);
-  }
-  .action-card:active { transform: scale(0.97); }
-  .action-icon { font-size: 28px; margin-bottom: 8px; }
-  .action-label { font-size: 14px; font-weight: 700; color: var(--text); }
-  .action-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text3);
+  padding: 20px 18px 8px;
+}
 
-  .recent-card {
-    background: var(--surface);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-  }
-  .recent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .recent-title { font-size: 15px; font-weight: 800; }
-  .see-all { font-size: 13px; font-weight: 700; color: var(--primary); cursor: pointer; }
-  .recent-item {
-    display: flex; gap: 10px; align-items: flex-start;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .recent-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .ri-icon {
-    width: 32px; height: 32px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; flex-shrink: 0;
-  }
-  .ri-q { background: var(--primary-light); }
-  .ri-a { background: var(--success-light); }
-  .ri-text { flex: 1; }
-  .ri-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3); }
-  .ri-content { font-size: 13px; color: var(--text); font-weight: 600; margin-top: 2px; line-height: 1.4; }
-  .ri-time { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.device-list { padding: 0 18px; display: flex; flex-direction: column; gap: 8px; }
+.device-item {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.device-item.selected {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-dim);
+}
+.device-item:active { background: var(--surface2); }
+.dev-left { display: flex; align-items: center; gap: 12px; }
+.dev-icon {
+  width: 42px; height: 42px;
+  background: var(--teal-dim);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.dev-name  { font-size: 15px; font-weight: 700; color: var(--text); }
+.dev-mac   { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: monospace; }
+.dev-signal{ font-size: 12px; font-weight: 700; color: var(--teal); }
 
-  /* ======= STUDY SCREEN ======= */
-  #study { background: var(--bg); }
+.cmd-log {
+  background: #080C10;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  max-height: 100px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 4px;
+  border: 1px solid var(--border);
+}
+.log-line { display: flex; gap: 8px; }
+.log-t    { color: #3A4A5A; flex-shrink: 0; }
+.log-c    { color: var(--purple); }
+.log-s    { color: var(--teal); }
 
-  .study-header {
-    background: linear-gradient(135deg, #4F46E5, #6366F1);
-    padding: 16px 20px 20px;
-    flex-shrink: 0;
-  }
-  .study-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .study-header .screen-title { color: white; font-size: 20px; }
-  .study-badge {
-    background: rgba(255,255,255,0.2);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 50px;
-    font-size: 12px; font-weight: 700;
-    display: flex; align-items: center; gap: 5px;
-  }
-  .study-sub { font-size: 13px; color: rgba(255,255,255,0.7); }
+.btn-main {
+  display: block;
+  background: var(--coral);
+  color: white; border: none; border-radius: 50px;
+  padding: 17px; width: calc(100% - 36px);
+  margin: 20px 18px;
+  font-family: var(--font-display);
+  font-size: 19px; letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 6px 22px var(--coral-glow);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-main:active   { transform: scale(0.97); }
+.btn-main:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+.btn-main.teal     { background: var(--teal); color: #0D1117; box-shadow: 0 6px 22px var(--teal-glow); }
+.btn-main.danger   { background: transparent; color: #FF5252; border: 1.5px solid rgba(255,82,82,0.3); box-shadow: none; }
 
-  .chat-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+/* ============================================================
+   HOME SCREEN
+   ============================================================ */
+#home {}
 
-  .chat-bubble {
-    max-width: 82%;
-    padding: 12px 16px;
-    border-radius: 18px;
-    font-size: 14px;
-    line-height: 1.5;
-    font-weight: 600;
-  }
-  .chat-bubble.user {
-    background: var(--primary);
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 6px;
-  }
-  .chat-bubble.bot {
-    background: var(--surface);
-    color: var(--text);
-    align-self: flex-start;
-    border-bottom-left-radius: 6px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-  }
-  .chat-meta {
-    font-size: 11px;
-    color: var(--text3);
-    margin-bottom: 4px;
-    font-weight: 700;
-    display: flex; align-items: center; gap: 4px;
-  }
-  .chat-group { display: flex; flex-direction: column; }
-  .chat-group.user { align-items: flex-end; }
-  .chat-group.bot { align-items: flex-start; }
+.home-hero {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 18px;
+}
+.home-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.home-greeting    { font-size: 13px; color: var(--text2); font-weight: 500; }
+.home-greeting strong { display: block; font-family: var(--font-display); font-size: 26px; color: var(--text); }
+.conn-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 50px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.conn-chip.on  { background: rgba(0,212,180,0.12); color: var(--teal); }
+.conn-chip.off { background: rgba(255,107,74,0.1); color: var(--coral); }
 
-  .typing-indicator {
-    display: flex; gap: 4px; align-items: center;
-    padding: 12px 16px;
-    background: var(--surface);
-    border-radius: 18px;
-    border-bottom-left-radius: 6px;
-    border: 1px solid var(--border);
-    align-self: flex-start;
-    display: none;
-  }
-  .typing-indicator.show { display: flex; }
-  .typing-dot {
-    width: 8px; height: 8px;
-    background: var(--text3);
-    border-radius: 50%;
-    animation: typing 1.2s ease-in-out infinite;
-  }
-  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes typing { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+/* Mode toggle */
+.mode-toggle {
+  display: flex;
+  background: var(--surface2);
+  border-radius: 50px; padding: 4px; gap: 4px;
+}
+.mode-btn {
+  flex: 1; padding: 11px 14px;
+  border: none; border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  color: var(--text2); background: transparent;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.mode-btn.active-study { background: var(--purple); color: white; box-shadow: 0 4px 14px var(--purple-dim); }
+.mode-btn.active-play  { background: var(--amber);  color: #1a1000; box-shadow: 0 4px 14px var(--amber-dim); }
 
-  .chat-input-area {
-    background: var(--surface);
-    padding: 12px 16px;
-    border-top: 1px solid var(--border);
-    display: flex; gap: 10px; align-items: center;
-    flex-shrink: 0;
-  }
-  .chat-input {
-    flex: 1;
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: 50px;
-    padding: 10px 16px;
-    font-size: 14px;
-    font-family: 'Nunito', sans-serif;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .chat-input:focus { border-color: var(--primary); }
-  .send-btn, .mic-btn {
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    transition: transform 0.15s;
-    flex-shrink: 0;
-  }
-  .send-btn { background: var(--primary); color: white; }
-  .mic-btn { background: var(--surface2); }
-  .send-btn:active, .mic-btn:active { transform: scale(0.92); }
+.home-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
 
-  .ai-thinking {
-    background: var(--primary-light);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    display: flex; align-items: center; gap: 8px;
-    font-size: 13px; font-weight: 700; color: var(--primary);
-    margin: 0 16px;
-    display: none;
-  }
-  .ai-thinking.show { display: flex; }
+/* Robot status card */
+.robot-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex; align-items: center; gap: 16px;
+}
+.mini-robot {
+  width: 60px; height: 60px; flex-shrink: 0;
+  background: var(--surface2);
+  border-radius: 16px;
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+}
+.mr-face { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.mr-eyes { display: flex; gap: 8px; }
+.mr-eye  { width: 9px; height: 11px; background: var(--teal); border-radius: 50%; }
+.mr-mouth{ width: 18px; height: 7px; background: var(--coral); border-radius: 0 0 9px 9px; }
+.robot-info { flex: 1; }
+.robot-info h3 { font-size: 16px; font-weight: 700; color: var(--text); }
+.robot-info p  { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.oled-chip {
+  background: #080C10;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 11px; font-family: monospace;
+  color: var(--teal); margin-top: 8px;
+  border: 1px solid rgba(0,212,180,0.2);
+  display: inline-block;
+}
 
-  /* ======= PLAY SCREEN ======= */
-  #play { background: var(--bg); }
+/* Quick action grid */
+.quick-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.qa-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 16px; cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.qa-card:active { transform: scale(0.96); }
+.qa-icon  { font-size: 28px; margin-bottom: 8px; }
+.qa-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.qa-sub   { font-size: 11px; color: var(--text2); margin-top: 3px; }
 
-  .play-header {
-    background: linear-gradient(135deg, #F59E0B, #F97316);
-    padding: 16px 20px 20px;
-    flex-shrink: 0;
-  }
-  .play-header .screen-title { color: white; font-size: 20px; }
-  .play-header .study-sub { color: rgba(255,255,255,0.7); }
+/* Recent activity */
+.activity-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.activity-header {
+  padding: 14px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.activity-header span { font-size: 14px; font-weight: 700; color: var(--text); }
+.see-all { font-size: 12px; font-weight: 700; color: var(--coral); cursor: pointer; }
+.activity-item {
+  padding: 12px 16px;
+  display: flex; gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.activity-item:last-child { border-bottom: none; }
+.ai-dot {
+  width: 30px; height: 30px; flex-shrink: 0;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.ai-dot.q { background: var(--purple-dim); }
+.ai-dot.a { background: var(--teal-dim); }
+.ai-text  { flex: 1; }
+.ai-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3); }
+.ai-msg   { font-size: 13px; color: var(--text); font-weight: 500; margin-top: 2px; line-height: 1.4; }
+.ai-time  { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
-  .play-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+/* ============================================================
+   STUDY SCREEN
+   ============================================================ */
+#study {}
 
-  .dpad-container {
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 24px;
-    display: flex; flex-direction: column; align-items: center; gap: 0;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border);
-  }
-  .dpad-title { font-size: 14px; font-weight: 800; color: var(--text2); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+.study-hdr {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.study-hdr-info { flex: 1; }
+.study-hdr-info h2 { font-family: var(--font-display); font-size: 20px; color: var(--text); }
+.study-hdr-info p  { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.ai-live-badge {
+  background: var(--purple-dim);
+  color: var(--purple);
+  padding: 5px 12px; border-radius: 50px;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; gap: 5px;
+}
 
-  .dpad-row { display: flex; gap: 8px; justify-content: center; }
-  .dpad-btn {
-    width: 72px; height: 72px;
-    border-radius: var(--radius-sm);
-    border: none;
-    cursor: pointer;
-    font-size: 28px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.1s;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    position: relative;
-    overflow: hidden;
-  }
-  .dpad-btn:active { transform: scale(0.92); }
-  .dpad-btn.fwd { background: var(--primary); color: white; }
-  .dpad-btn.bwd { background: var(--primary); color: white; }
-  .dpad-btn.lft { background: var(--primary-light); color: var(--primary); }
-  .dpad-btn.rgt { background: var(--primary-light); color: var(--primary); }
-  .dpad-btn.stp {
-    width: 72px; height: 72px;
-    background: var(--danger-light);
-    color: var(--danger);
-    font-size: 14px;
-    font-weight: 900;
-    letter-spacing: 0.5px;
-  }
-  .dpad-spacer { width: 72px; height: 72px; }
+.chat-area {
+  flex: 1; overflow-y: auto; padding: 16px;
+  display: flex; flex-direction: column; gap: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+.chat-area::-webkit-scrollbar { display: none; }
 
-  .cmd-sent {
-    background: var(--surface);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-  }
-  .cmd-label { font-size: 12px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-  .cmd-value {
-    font-family: 'Space Grotesk', monospace;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--primary);
-    background: var(--primary-light);
-    padding: 8px 14px;
-    border-radius: 8px;
-    display: inline-block;
-  }
+.chat-group        { display: flex; flex-direction: column; }
+.chat-group.user   { align-items: flex-end; }
+.chat-group.bot    { align-items: flex-start; }
+.chat-who {
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  margin-bottom: 5px; display: flex; align-items: center; gap: 4px;
+}
+.chat-bubble {
+  max-width: 84%; padding: 12px 16px;
+  border-radius: 18px; font-size: 14px; line-height: 1.55;
+  font-weight: 500;
+}
+.chat-bubble.user {
+  background: var(--coral); color: white;
+  border-bottom-right-radius: 5px;
+}
+.chat-bubble.bot {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-bottom-left-radius: 5px;
+}
 
-  .voice-control {
-    background: var(--surface);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-  }
-  .voice-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-  .voice-btn {
-    width: 100%; padding: 14px;
-    background: var(--accent-light);
-    color: #92400e;
-    border: 1.5px solid #FCD34D;
-    border-radius: 50px;
-    font-size: 15px; font-weight: 800;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: all 0.15s;
-  }
-  .voice-btn:active { transform: scale(0.97); }
-  .voice-btn.listening { background: #FEF3C7; animation: voicePulse 1s ease-in-out infinite; }
-  @keyframes voicePulse { 0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.3)} 50%{box-shadow:0 0 0 12px rgba(245,158,11,0)} }
+.typing-row {
+  display: flex; gap: 5px; align-items: center;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border-radius: 18px; border-bottom-left-radius: 5px;
+  border: 1px solid var(--border2);
+  align-self: flex-start;
+  display: none;
+}
+.typing-row.show { display: flex; }
+.t-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text3);
+  animation: tdot 1.2s ease-in-out infinite;
+}
+.t-dot:nth-child(2) { animation-delay: 0.2s; }
+.t-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes tdot { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-7px)} }
 
-  /* ======= HISTORY SCREEN ======= */
-  #history { background: var(--bg); }
+.thinking-bar {
+  background: var(--purple-dim);
+  border-top: 1px solid rgba(155,127,255,0.2);
+  padding: 10px 18px;
+  font-size: 13px; font-weight: 600; color: var(--purple);
+  display: none; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.thinking-bar.show { display: flex; }
+.spin { animation: spin 1.2s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  .history-list { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-  .history-session {
-    background: var(--surface);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-  }
-  .hs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .hs-date { font-size: 13px; font-weight: 800; color: var(--text); }
-  .hs-count {
-    background: var(--primary-light);
-    color: var(--primary);
-    padding: 3px 10px;
-    border-radius: 50px;
-    font-size: 12px; font-weight: 700;
-  }
-  .hs-pair { margin-bottom: 8px; }
-  .hs-pair:last-child { margin-bottom: 0; }
-  .hs-q { font-size: 13px; font-weight: 700; color: var(--text); padding: 8px 10px; background: var(--primary-light); border-radius: 8px; }
-  .hs-q::before { content: "Q  "; font-weight: 900; color: var(--primary); }
-  .hs-a { font-size: 12px; color: var(--text2); font-weight: 600; padding: 8px 10px; background: var(--success-light); border-radius: 8px; margin-top: 4px; line-height: 1.5; }
-  .hs-a::before { content: "A  "; font-weight: 900; color: var(--success); }
+.chat-input-row {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 14px;
+  display: flex; gap: 8px; align-items: center;
+  flex-shrink: 0;
+}
+.chat-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1.5px solid var(--border2);
+  border-radius: 50px;
+  padding: 11px 18px;
+  font-size: 14px; font-weight: 500;
+  font-family: var(--font-body);
+  color: var(--text); outline: none;
+  transition: border-color 0.2s;
+}
+.chat-input::placeholder { color: var(--text3); }
+.chat-input:focus { border-color: var(--coral); }
+.icon-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: none; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; transition: transform 0.15s;
+}
+.icon-btn:active { transform: scale(0.9); }
+.icon-btn.send { background: var(--coral); color: white; box-shadow: 0 4px 14px var(--coral-glow); }
+.icon-btn.mic  { background: var(--surface2); border: 1px solid var(--border2); }
 
-  /* ======= SETTINGS / API SCREEN ======= */
-  #settings { background: var(--bg); }
+/* ============================================================
+   PLAY SCREEN
+   ============================================================ */
+#play {}
 
-  .settings-content { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-  .settings-section {
-    background: var(--surface);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    border: 1px solid var(--border);
-  }
-  .settings-section h3 { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
-  .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .setting-row:last-child { border-bottom: none; padding-bottom: 0; }
-  .setting-label { font-size: 14px; font-weight: 700; color: var(--text); }
-  .setting-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .settings-input {
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 13px;
-    font-family: 'Space Grotesk', monospace;
-    color: var(--text);
-    outline: none;
-    width: 100%;
-    margin-top: 8px;
-  }
-  .settings-input:focus { border-color: var(--primary); }
-  .toggle {
-    width: 44px; height: 24px;
-    background: var(--border);
-    border-radius: 50px;
-    position: relative;
-    cursor: pointer;
-    transition: background 0.2s;
-    flex-shrink: 0;
-  }
-  .toggle.on { background: var(--success); }
-  .toggle::after {
-    content: '';
-    width: 18px; height: 18px;
-    background: white;
-    border-radius: 50%;
-    position: absolute;
-    top: 3px; left: 3px;
-    transition: left 0.2s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-  }
-  .toggle.on::after { left: 23px; }
+.play-hdr {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
 
-  /* ======= BOTTOM NAV ======= */
-  .bottom-nav {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    padding: 8px 0 20px;
-    flex-shrink: 0;
-  }
-  .nav-item {
-    flex: 1;
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    cursor: pointer;
-    padding: 4px 0;
-    transition: all 0.15s;
-  }
-  .nav-icon { font-size: 22px; }
-  .nav-label { font-size: 10px; font-weight: 700; color: var(--text3); }
-  .nav-item.active .nav-label { color: var(--primary); }
-  .nav-item.active .nav-dot { width: 4px; height: 4px; background: var(--primary); border-radius: 50%; }
-  .nav-dot { width: 4px; height: 4px; border-radius: 50%; }
+.play-body { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
 
-  /* ======= COMMAND LOG ======= */
-  .cmd-log {
-    background: #0F0E1A;
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    font-family: 'Space Grotesk', monospace;
-    font-size: 12px;
-    max-height: 90px;
-    overflow-y: auto;
-    color: #6EE7B7;
-    display: flex; flex-direction: column; gap: 3px;
-  }
-  .log-line { display: flex; gap: 8px; }
-  .log-time { color: #4B5563; flex-shrink: 0; }
-  .log-cmd { color: #A78BFA; }
-  .log-status { color: #6EE7B7; }
+/* Last command */
+.cmd-display {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cmd-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); }
+.cmd-value {
+  font-family: 'Courier New', monospace;
+  font-size: 15px; font-weight: 700; color: var(--teal);
+  background: var(--teal-dim); padding: 5px 14px;
+  border-radius: 6px;
+}
 
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* D-Pad */
+.dpad-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.dpad-title {
+  text-align: center; font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--text3); margin-bottom: 16px;
+}
+.dpad-row  { display: flex; justify-content: center; gap: 10px; }
+.dpad-gap  { margin: 10px 0; }
+.dpad-btn  {
+  width: 76px; height: 76px;
+  border-radius: var(--radius-sm);
+  border: none; cursor: pointer;
+  font-size: 28px;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s, box-shadow 0.1s;
+  user-select: none; -webkit-user-select: none;
+}
+.dpad-btn:active { transform: scale(0.91); }
+.dpad-spacer { width: 76px; height: 76px; }
+.db-fwd, .db-bwd { background: var(--coral); box-shadow: 0 4px 16px var(--coral-glow); }
+.db-lft, .db-rgt { background: var(--surface2); border: 1.5px solid var(--border2); }
+.db-stp {
+  width: 76px; height: 76px;
+  background: rgba(255,82,82,0.12);
+  border: 1.5px solid rgba(255,82,82,0.25);
+  border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 900;
+  color: #FF5252; font-family: var(--font-display); letter-spacing: 0.5px;
+}
+.dpad-hint {
+  text-align: center; font-size: 11px; color: var(--text3);
+  font-weight: 600; margin-top: 14px;
+}
 
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 110px;
-    left: 50%; transform: translateX(-50%);
-    background: #1E1B4B;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 50px;
-    font-size: 13px; font-weight: 700;
-    opacity: 0;
-    transition: opacity 0.3s;
-    white-space: nowrap;
-    z-index: 100;
-  }
-  .toast.show { opacity: 1; }
+/* Voice play */
+.voice-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+.voice-title {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+}
+.voice-btn {
+  width: 100%; padding: 15px;
+  background: var(--amber-dim);
+  border: 1.5px solid rgba(255,184,48,0.3);
+  border-radius: 50px;
+  font-family: var(--font-display);
+  font-size: 17px; color: var(--amber); letter-spacing: 0.3px;
+  cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.voice-btn:active { transform: scale(0.97); }
+.voice-btn.listening { animation: vpulse 1s ease-in-out infinite; }
+@keyframes vpulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,184,48,0.25)} 50%{box-shadow:0 0 0 14px rgba(255,184,48,0)} }
+.voice-hint { text-align: center; font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 10px; }
 
-  .api-note {
-    background: var(--accent-light);
-    border: 1.5px solid #FCD34D;
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    font-size: 13px;
-    color: #92400e;
-    font-weight: 600;
-    line-height: 1.5;
-    margin: 0 20px;
-  }
-  .api-note strong { font-weight: 800; }
+/* Play log */
+.play-log-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.plc-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.8px;
+}
+
+/* ============================================================
+   HISTORY SCREEN
+   ============================================================ */
+#history {}
+
+.hist-filter {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 18px;
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.hist-clear { font-size: 12px; font-weight: 700; color: var(--coral); cursor: pointer; }
+
+.history-list { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+
+.hist-session {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.hs-hdr {
+  padding: 12px 14px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.hs-date { font-size: 13px; font-weight: 700; color: var(--text); }
+.hs-badge {
+  background: var(--purple-dim); color: var(--purple);
+  padding: 3px 10px; border-radius: 50px;
+  font-size: 11px; font-weight: 700;
+}
+.hs-pair { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.hs-pair:last-child { border-bottom: none; }
+.hs-q {
+  font-size: 13px; font-weight: 700; color: var(--text);
+  background: var(--purple-dim); padding: 7px 10px;
+  border-radius: 7px; margin-bottom: 5px;
+}
+.hs-q::before { content: "Q  "; color: var(--purple); font-weight: 900; }
+.hs-a {
+  font-size: 12px; color: var(--text2); font-weight: 500;
+  background: var(--teal-dim); padding: 7px 10px;
+  border-radius: 7px; line-height: 1.5;
+}
+.hs-a::before { content: "A  "; color: var(--teal); font-weight: 900; }
+
+/* ============================================================
+   SETTINGS SCREEN
+   ============================================================ */
+#settings {}
+
+.settings-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+.warn-note {
+  background: var(--amber-dim);
+  border: 1px solid rgba(255,184,48,0.25);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 13px; font-weight: 600; color: #C8891A; line-height: 1.5;
+}
+.warn-note strong { font-weight: 800; color: var(--amber); }
+
+.settings-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.settings-card h3 {
+  padding: 13px 16px;
+  font-size: 13px; font-weight: 700; color: var(--text);
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+}
+.s-row {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.s-row:last-child { border-bottom: none; }
+.s-row.col { flex-direction: column; align-items: flex-start; }
+.s-label { font-size: 14px; font-weight: 600; color: var(--text); }
+.s-sub   { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.s-input {
+  background: var(--surface2);
+  border: 1.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 13px; font-family: 'Courier New', monospace;
+  color: var(--text); outline: none; width: 100%;
+  margin-top: 8px;
+  transition: border-color 0.2s;
+}
+.s-input:focus { border-color: var(--teal); }
+.s-select {
+  background: var(--surface2);
+  border: 1.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 13px; font-family: var(--font-body);
+  color: var(--text); outline: none; width: 100%;
+  margin-top: 8px; cursor: pointer;
+}
+.s-textarea {
+  background: var(--surface2);
+  border: 1.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 13px; font-family: var(--font-body);
+  color: var(--text); outline: none; width: 100%;
+  margin-top: 8px; resize: none; line-height: 1.5;
+}
+.s-textarea:focus, .s-select:focus { border-color: var(--teal); }
+
+.toggle {
+  width: 46px; height: 26px;
+  background: var(--surface3);
+  border-radius: 50px; position: relative;
+  cursor: pointer; transition: background 0.2s;
+  flex-shrink: 0;
+  border: 1px solid var(--border2);
+}
+.toggle.on { background: var(--teal); border-color: var(--teal); }
+.toggle::after {
+  content: '';
+  width: 18px; height: 18px;
+  background: white; border-radius: 50%;
+  position: absolute; top: 3px; left: 3px;
+  transition: left 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.toggle.on::after { left: 25px; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast {
+  position: fixed; bottom: 80px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 10px 22px; border-radius: 50px;
+  font-size: 13px; font-weight: 600;
+  white-space: nowrap; z-index: 9999;
+  opacity: 0; transition: opacity 0.25s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.toast.show { opacity: 1; }
 </style>
 </head>
 <body>
 
-<div class="phone-frame">
-  <!-- Status Bar -->
-  <div class="status-bar">
-    <span>9:41</span>
-    <div class="status-icons">
-      <span>●●●</span>
-      <span>WiFi</span>
-      <span>🔋</span>
-    </div>
-  </div>
-
-  <!-- ===== SPLASH SCREEN ===== -->
-  <div class="screen active" id="splash" style="background: linear-gradient(145deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%); align-items: center; justify-content: center; gap: 0; padding: 40px 20px;">
-    <div class="robot-face">
-      <div class="robot-inner">
-        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
-        <div class="mouth"></div>
+<!-- ============================================================
+     SPLASH
+     ============================================================ -->
+<div class="screen active" id="splash">
+  <div class="splash-bg"></div>
+  <div class="splash-content">
+    <div class="robot-wrap">
+      <div class="r-face">
+        <div class="r-eyes"><div class="r-eye"></div><div class="r-eye"></div></div>
+        <div class="r-mouth"></div>
       </div>
     </div>
-    <div class="app-name">CogniBuddy</div>
-    <div class="app-tagline">Smart Learning Companion</div>
-    <button class="splash-btn" onclick="showScreen('bluetooth')">Get Started →</button>
-    <div style="margin-top: 24px; font-size: 12px; color: rgba(255,255,255,0.5);">ESP32-S3 Powered · AI Learning</div>
-  </div>
-
-  <!-- ===== BLUETOOTH SCREEN ===== -->
-  <div class="screen" id="bluetooth" style="background: var(--bg);">
-    <div class="screen-header" style="background: var(--surface);">
-      <div style="flex:1; font-size: 19px; font-weight: 900; color: var(--text);">🔗 Connect Robot</div>
-      <button onclick="showHome()" style="background:var(--primary-light); color: var(--primary); border:none; border-radius:50px; padding: 8px 16px; font-size: 13px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer;">Skip</button>
+    <div class="splash-title">Cogni<span>Buddy</span></div>
+    <div class="splash-sub">Your Smart Learning Robot Companion</div>
+    <div class="splash-pills">
+      <div class="pill">📡 ESP32-S3</div>
+      <div class="pill">🧠 Gemini AI</div>
+      <div class="pill">🔵 Bluetooth</div>
     </div>
-    <div style="flex:1; overflow-y:auto;">
-      <div class="bt-hero">
-        <div class="bt-icon">📡</div>
-        <h2>Bluetooth Pairing</h2>
-        <p>Select your CogniBuddy device</p>
-        <div class="status-pill" id="bt-status" style="background:rgba(239,68,68,0.2); color:#FCA5A5;">
-          <div class="status-dot pulse"></div>
-          Not Connected
-        </div>
-      </div>
+    <button class="btn-start" onclick="showScreen('bluetooth')">Let's Go →</button>
+  </div>
+</div>
 
-      <div class="section-label">Paired Devices</div>
-      <div class="device-list">
-        <div class="device-item" onclick="selectDevice(this, 'CogniBuddy-ESP32')" id="dev1">
-          <div class="device-info">
-            <div class="device-icon">🤖</div>
-            <div>
-              <div class="device-name">CogniBuddy-ESP32</div>
-              <div class="device-mac">AA:BB:CC:DD:EE:FF</div>
-            </div>
+<!-- ============================================================
+     BLUETOOTH
+     ============================================================ -->
+<div class="screen" id="bluetooth">
+  <div class="app-header">
+    <div class="hdr-title">🔗 Connect Robot</div>
+    <button class="btn-main teal" style="width:auto; margin:0; padding:9px 20px; font-size:14px;" onclick="showHome()">Skip</button>
+  </div>
+  <div class="scroll-body">
+    <div class="bt-hero">
+      <div class="bt-hero-icon">📡</div>
+      <h2>Bluetooth Pairing</h2>
+      <p>Select your CogniBuddy device below</p>
+      <div class="status-pill disconnected" id="bt-status-pill">
+        <div class="dot pulse"></div> Not Connected
+      </div>
+    </div>
+
+    <div class="section-label">Paired Devices</div>
+    <div class="device-list">
+      <div class="device-item" id="dev-1" onclick="selectDevice('dev-1','CogniBuddy-ESP32','AA:BB:CC:DD:EE:FF')">
+        <div class="dev-left">
+          <div class="dev-icon">🤖</div>
+          <div>
+            <div class="dev-name">CogniBuddy-ESP32</div>
+            <div class="dev-mac">AA:BB:CC:DD:EE:FF</div>
           </div>
-          <div class="device-signal">-48 dBm</div>
         </div>
-        <div class="device-item" onclick="selectDevice(this, 'ESP32-S3-BLE')">
-          <div class="device-info">
-            <div class="device-icon">📟</div>
-            <div>
-              <div class="device-name">ESP32-S3-BLE</div>
-              <div class="device-mac">11:22:33:44:55:66</div>
-            </div>
+        <div class="dev-signal">-48 dBm</div>
+      </div>
+      <div class="device-item" id="dev-2" onclick="selectDevice('dev-2','ESP32-S3-BLE','11:22:33:44:55:66')">
+        <div class="dev-left">
+          <div class="dev-icon">📟</div>
+          <div>
+            <div class="dev-name">ESP32-S3-BLE</div>
+            <div class="dev-mac">11:22:33:44:55:66</div>
           </div>
-          <div class="device-signal">-72 dBm</div>
         </div>
+        <div class="dev-signal">-71 dBm</div>
       </div>
+    </div>
 
-      <div class="section-label" style="margin-top:16px;">Command Log</div>
-      <div style="margin: 0 20px 8px;">
-        <div class="cmd-log" id="bt-log">
-          <div class="log-line"><span class="log-time">09:40:01</span><span class="log-cmd">INIT</span><span class="log-status">Bluetooth adapter ready</span></div>
-          <div class="log-line"><span class="log-time">09:40:02</span><span class="log-cmd">SCAN</span><span class="log-status">Found 2 devices</span></div>
-        </div>
+    <div class="section-label">Command Log</div>
+    <div style="margin: 0 18px 4px;">
+      <div class="cmd-log" id="bt-log">
+        <div class="log-line"><span class="log-t">09:40:01</span><span class="log-c"> INIT </span><span class="log-s">Bluetooth adapter ready</span></div>
+        <div class="log-line"><span class="log-t">09:40:02</span><span class="log-c"> SCAN </span><span class="log-s">Found 2 paired devices</span></div>
       </div>
+    </div>
 
-      <button class="btn-primary" id="connect-btn" onclick="connectDevice()" disabled>Connect to Device</button>
+    <button class="btn-main" id="bt-connect-btn" onclick="connectDevice()" disabled>Connect to Device</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     HOME
+     ============================================================ -->
+<div class="screen" id="home">
+  <div class="home-hero">
+    <div class="home-top">
+      <div class="home-greeting">Hello! 👋 <strong>CogniBuddy</strong></div>
+      <div class="conn-chip on" id="home-conn-chip" onclick="showScreen('bluetooth')">
+        <div class="dot"></div><span id="home-conn-text">Connected</span>
+      </div>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-btn active-study" id="mbtn-study" onclick="switchMode('study')">📚 Study</button>
+      <button class="mode-btn" id="mbtn-play" onclick="switchMode('play')">🎮 Play</button>
     </div>
   </div>
 
-  <!-- ===== HOME SCREEN ===== -->
-  <div class="screen" id="home">
-    <div class="home-header">
-      <div class="home-top">
-        <div class="greeting">Hello! 👋 <span>CogniBuddy</span></div>
-        <div class="conn-badge" id="home-conn" onclick="showScreen('bluetooth')">
-          <div class="conn-badge-dot"></div>
-          <span id="conn-text">Connected</span>
-        </div>
-      </div>
-      <div class="mode-toggle">
-        <button class="mode-btn active study" id="study-btn" onclick="switchMode('study')">📚 Study Mode</button>
-        <button class="mode-btn play" id="play-btn" onclick="switchMode('play')">🎮 Play Mode</button>
-      </div>
-    </div>
-
-    <div class="home-content" id="home-content">
-      <div class="robot-status-card">
+  <div class="scroll-body">
+    <div class="home-body">
+      <!-- Robot card -->
+      <div class="robot-card">
         <div class="mini-robot">
-          <div style="text-align:center;">
-            <div class="mini-eyes"><div class="mini-eye"></div><div class="mini-eye"></div></div>
-            <div style="width:18px; height:8px; background:white; border-radius:0 0 9px 9px; margin: 4px auto 0;"></div>
+          <div class="mr-face">
+            <div class="mr-eyes"><div class="mr-eye"></div><div class="mr-eye"></div></div>
+            <div class="mr-mouth"></div>
           </div>
         </div>
-        <div class="robot-state" style="flex:1;">
-          <h3 id="robot-state-text">Ready to Learn!</h3>
-          <p id="robot-mode-text">Study Mode Active</p>
-          <div class="oled-preview" id="oled-preview">( ◠‿◠ )  READY</div>
+        <div class="robot-info">
+          <h3 id="robot-state">Ready to Learn!</h3>
+          <p id="robot-mode-sub">Study Mode · Gemini AI</p>
+          <div class="oled-chip" id="oled-display">( ◠‿◠ )  READY</div>
         </div>
       </div>
 
-      <div class="quick-actions">
-        <div class="action-card" onclick="showScreen('study')" style="border-color: #818CF8;">
-          <div class="action-icon">📚</div>
-          <div class="action-label">Study Mode</div>
-          <div class="action-sub">AI Learning</div>
+      <!-- Quick grid -->
+      <div class="quick-grid">
+        <div class="qa-card" style="border-color:rgba(155,127,255,0.3);" onclick="showScreen('study')">
+          <div class="qa-icon">📚</div>
+          <div class="qa-title">Study Mode</div>
+          <div class="qa-sub">AI-powered learning</div>
         </div>
-        <div class="action-card" onclick="showScreen('play')" style="border-color: #FCD34D;">
-          <div class="action-icon">🎮</div>
-          <div class="action-label">Play Mode</div>
-          <div class="action-sub">Robot Control</div>
+        <div class="qa-card" style="border-color:rgba(255,184,48,0.3);" onclick="showScreen('play')">
+          <div class="qa-icon">🎮</div>
+          <div class="qa-title">Play Mode</div>
+          <div class="qa-sub">Robot control</div>
         </div>
-        <div class="action-card" onclick="showScreen('history')" style="border-color: #6EE7B7;">
-          <div class="action-icon">📋</div>
-          <div class="action-label">History</div>
-          <div class="action-sub">Parent View</div>
+        <div class="qa-card" style="border-color:rgba(0,212,180,0.3);" onclick="showScreen('history')">
+          <div class="qa-icon">📋</div>
+          <div class="qa-title">History</div>
+          <div class="qa-sub">Parent monitor</div>
         </div>
-        <div class="action-card" onclick="showScreen('settings')" style="border-color: #FBBF24;">
-          <div class="action-icon">⚙️</div>
-          <div class="action-label">Settings</div>
-          <div class="action-sub">API & Config</div>
+        <div class="qa-card" style="border-color:rgba(255,107,74,0.3);" onclick="showScreen('settings')">
+          <div class="qa-icon">⚙️</div>
+          <div class="qa-title">Settings</div>
+          <div class="qa-sub">API & config</div>
         </div>
       </div>
 
-      <div class="recent-card">
-        <div class="recent-header">
-          <div class="recent-title">Recent Activity</div>
-          <div class="see-all" onclick="showScreen('history')">See All →</div>
+      <!-- Recent activity -->
+      <div class="activity-card">
+        <div class="activity-header">
+          <span>Recent Activity</span>
+          <span class="see-all" onclick="showScreen('history')">See all →</span>
         </div>
-        <div class="recent-item">
-          <div class="ri-icon ri-q">❓</div>
-          <div class="ri-text">
-            <div class="ri-label">Question</div>
-            <div class="ri-content">Why is the sky blue?</div>
-            <div class="ri-time">Today 9:30 AM</div>
+        <div class="activity-item">
+          <div class="ai-dot q">❓</div>
+          <div class="ai-text">
+            <div class="ai-label">Question</div>
+            <div class="ai-msg">Why is the sky blue?</div>
+            <div class="ai-time">Today · 9:30 AM</div>
           </div>
         </div>
-        <div class="recent-item">
-          <div class="ri-icon ri-a">✅</div>
-          <div class="ri-text">
-            <div class="ri-label">Answer</div>
-            <div class="ri-content">The sky appears blue because of Rayleigh scattering...</div>
-            <div class="ri-time">Today 9:30 AM</div>
+        <div class="activity-item">
+          <div class="ai-dot a">✅</div>
+          <div class="ai-text">
+            <div class="ai-label">Gemini Answer</div>
+            <div class="ai-msg">Because of Rayleigh scattering — blue light bounces more...</div>
+            <div class="ai-time">Today · 9:30 AM</div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <div class="bottom-nav" id="home-nav">
-      <div class="nav-item active" onclick="showNav('home')">
-        <div class="nav-icon">🏠</div>
-        <div class="nav-dot"></div>
-        <div class="nav-label">Home</div>
-      </div>
-      <div class="nav-item" onclick="showScreen('study'); showNav('study')">
-        <div class="nav-icon">📚</div>
-        <div class="nav-dot"></div>
-        <div class="nav-label">Study</div>
-      </div>
-      <div class="nav-item" onclick="showScreen('play'); showNav('play')">
-        <div class="nav-icon">🎮</div>
-        <div class="nav-dot"></div>
-        <div class="nav-label">Play</div>
-      </div>
-      <div class="nav-item" onclick="showScreen('history'); showNav('history')">
-        <div class="nav-icon">📋</div>
-        <div class="nav-dot"></div>
-        <div class="nav-label">History</div>
       </div>
     </div>
   </div>
 
-  <!-- ===== STUDY SCREEN ===== -->
-  <div class="screen" id="study">
-    <div class="study-header">
-      <div class="study-top">
-        <button class="back-btn" onclick="showScreen('home')" style="background:rgba(255,255,255,0.2); color:white;">←</button>
-        <div class="screen-title" style="color:white; flex:1; margin-left:10px;">Study Mode</div>
-        <div class="study-badge">📚 AI ON</div>
-      </div>
-      <div class="study-sub">Ask me anything — I'll help you learn!</div>
+  <div class="bottom-nav">
+    <div class="bnav-item active" id="bnav-home" onclick="showScreen('home'); setNav('home')">
+      <div class="bnav-icon">🏠</div>
+      <div class="bnav-label">Home</div>
     </div>
-
-    <div class="ai-thinking" id="ai-thinking">
-      <span style="animation: pulse 1s ease-in-out infinite; display:inline-block;">🧠</span>
-      AI is thinking... Sending to OpenAI
+    <div class="bnav-item" id="bnav-study" onclick="showScreen('study'); setNav('study')">
+      <div class="bnav-icon">📚</div>
+      <div class="bnav-label">Study</div>
     </div>
-
-    <div class="chat-container" id="chat-container">
-      <div class="chat-group bot">
-        <div class="chat-meta">🤖 CogniBuddy</div>
-        <div class="chat-bubble bot">Hi there! I'm CogniBuddy — your smart learning robot! Ask me any question and I'll explain it in a fun way. 🌟</div>
-      </div>
-      <div class="chat-group user">
-        <div class="chat-meta">🎤 Via Microphone</div>
-        <div class="chat-bubble user">Why is the sky blue?</div>
-      </div>
-      <div class="chat-group bot">
-        <div class="chat-meta">🤖 CogniBuddy · 9:30 AM</div>
-        <div class="chat-bubble bot">Great question! The sky is blue because of something called <strong>Rayleigh scattering</strong>. Sunlight contains all colors, but blue light scatters more when it hits air molecules, so we see blue! 🌈</div>
-      </div>
+    <div class="bnav-item" id="bnav-play" onclick="showScreen('play'); setNav('play')">
+      <div class="bnav-icon">🎮</div>
+      <div class="bnav-label">Play</div>
     </div>
-
-    <div class="typing-indicator" id="typing-indicator">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
+    <div class="bnav-item" id="bnav-history" onclick="showScreen('history'); setNav('history')">
+      <div class="bnav-icon">📋</div>
+      <div class="bnav-label">History</div>
     </div>
+  </div>
+</div>
 
-    <div class="chat-input-area">
-      <button class="mic-btn" onclick="simulateMic()" title="Voice Input">🎙️</button>
-      <input class="chat-input" id="chat-input" type="text" placeholder="Type a question..." />
-      <button class="send-btn" onclick="sendQuestion()">➤</button>
+<!-- ============================================================
+     STUDY
+     ============================================================ -->
+<div class="screen" id="study">
+  <div class="study-hdr">
+    <div class="hdr-back" onclick="showScreen('home')">←</div>
+    <div class="study-hdr-info">
+      <h2>Study Mode</h2>
+      <p>Ask anything — Gemini will explain!</p>
+    </div>
+    <div class="ai-live-badge"><div class="dot pulse" style="background:var(--purple)"></div> AI ON</div>
+  </div>
+
+  <div class="thinking-bar" id="thinking-bar">
+    <span class="spin">⟳</span> Gemini is thinking... crafting your answer
+  </div>
+
+  <div class="chat-area" id="chat-area">
+    <div class="chat-group bot">
+      <div class="chat-who">🤖 CogniBuddy</div>
+      <div class="chat-bubble bot">Hi! I'm CogniBuddy — ask me any question and Gemini AI will explain it in a fun, easy way! 🌟</div>
+    </div>
+    <div class="chat-group user">
+      <div class="chat-who">🎤 Via Microphone</div>
+      <div class="chat-bubble user">Why is the sky blue?</div>
+    </div>
+    <div class="chat-group bot">
+      <div class="chat-who">🤖 CogniBuddy · 9:30 AM</div>
+      <div class="chat-bubble bot">Great question! The sky looks blue because of <strong>Rayleigh scattering</strong> — sunlight has all colors, but blue light bounces off air molecules much more than other colors. So our eyes see blue everywhere we look up! 🌈</div>
+    </div>
+    <div class="typing-row" id="typing-row">
+      <div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>
     </div>
   </div>
 
-  <!-- ===== PLAY SCREEN ===== -->
-  <div class="screen" id="play">
-    <div class="play-header">
-      <div class="study-top">
-        <button class="back-btn" onclick="showScreen('home')" style="background:rgba(255,255,255,0.2); color:white;">←</button>
-        <div class="screen-title" style="color:white; flex:1; margin-left:10px;">Play Mode</div>
-        <div class="study-badge" style="background:rgba(255,255,255,0.2);">🎮 CTRL</div>
-      </div>
-      <div class="study-sub">Control CogniBuddy's movements!</div>
-    </div>
+  <div class="chat-input-row">
+    <button class="icon-btn mic" onclick="simulateMic()" title="Voice input">🎙️</button>
+    <input class="chat-input" id="chat-input" type="text" placeholder="Type your question…" />
+    <button class="icon-btn send" onclick="sendQuestion()">➤</button>
+  </div>
+</div>
 
-    <div class="play-content">
-      <div class="cmd-sent">
+<!-- ============================================================
+     PLAY
+     ============================================================ -->
+<div class="screen" id="play">
+  <div class="play-hdr">
+    <div class="hdr-back" onclick="showScreen('home')">←</div>
+    <div style="flex:1;">
+      <div style="font-family:var(--font-display); font-size:20px; color:var(--text);">Play Mode</div>
+      <div style="font-size:12px; color:var(--text2); margin-top:2px;">Control CogniBuddy's movement</div>
+    </div>
+    <div class="hdr-badge on"><div class="dot"></div> CTRL</div>
+  </div>
+
+  <div class="scroll-body">
+    <div class="play-body">
+
+      <!-- Last command -->
+      <div class="cmd-display">
         <div class="cmd-label">Last Command Sent</div>
-        <div class="cmd-value" id="last-cmd">—  Waiting...</div>
+        <div class="cmd-value" id="last-cmd">— Waiting</div>
       </div>
 
-      <div class="dpad-container">
+      <!-- D-Pad -->
+      <div class="dpad-card">
         <div class="dpad-title">Movement Control</div>
         <div class="dpad-row">
           <div class="dpad-spacer"></div>
-          <button class="dpad-btn fwd" onmousedown="sendCmd('MOVE_FORWARD')" ontouchstart="sendCmd('MOVE_FORWARD')" onmouseup="sendCmd('STOP')" ontouchend="sendCmd('STOP')">▲</button>
+          <button class="dpad-btn db-fwd"
+            onmousedown="sendCmd('MOVE_FORWARD')" ontouchstart="sendCmd('MOVE_FORWARD')"
+            onmouseup="sendCmd('STOP')"          ontouchend="sendCmd('STOP')">▲</button>
           <div class="dpad-spacer"></div>
         </div>
-        <div class="dpad-row" style="margin: 8px 0;">
-          <button class="dpad-btn lft" onmousedown="sendCmd('TURN_LEFT')" ontouchstart="sendCmd('TURN_LEFT')" onmouseup="sendCmd('STOP')" ontouchend="sendCmd('STOP')">◄</button>
-          <button class="dpad-btn stp" onclick="sendCmd('STOP')">STOP</button>
-          <button class="dpad-btn rgt" onmousedown="sendCmd('TURN_RIGHT')" ontouchstart="sendCmd('TURN_RIGHT')" onmouseup="sendCmd('STOP')" ontouchend="sendCmd('STOP')">►</button>
+        <div class="dpad-row dpad-gap">
+          <button class="dpad-btn db-lft"
+            onmousedown="sendCmd('TURN_LEFT')" ontouchstart="sendCmd('TURN_LEFT')"
+            onmouseup="sendCmd('STOP')"        ontouchend="sendCmd('STOP')">◄</button>
+          <button class="dpad-btn db-stp" onclick="sendCmd('STOP')">STOP</button>
+          <button class="dpad-btn db-rgt"
+            onmousedown="sendCmd('TURN_RIGHT')" ontouchstart="sendCmd('TURN_RIGHT')"
+            onmouseup="sendCmd('STOP')"         ontouchend="sendCmd('STOP')">►</button>
         </div>
         <div class="dpad-row">
           <div class="dpad-spacer"></div>
-          <button class="dpad-btn bwd" onmousedown="sendCmd('MOVE_BACKWARD')" ontouchstart="sendCmd('MOVE_BACKWARD')" onmouseup="sendCmd('STOP')" ontouchend="sendCmd('STOP')">▼</button>
+          <button class="dpad-btn db-bwd"
+            onmousedown="sendCmd('MOVE_BACKWARD')" ontouchstart="sendCmd('MOVE_BACKWARD')"
+            onmouseup="sendCmd('STOP')"            ontouchend="sendCmd('STOP')">▼</button>
           <div class="dpad-spacer"></div>
         </div>
-        <div style="font-size: 12px; color: var(--text3); margin-top: 12px; font-weight: 600;">Hold to move · Release to stop</div>
+        <div class="dpad-hint">Hold button to move · Release to stop</div>
       </div>
 
-      <div class="voice-control">
+      <!-- Voice -->
+      <div class="voice-card">
         <div class="voice-title">🎙️ Voice Commands</div>
-        <button class="voice-btn" id="voice-play-btn" onclick="toggleVoicePlay()">🎙️ Tap & Say a Command</button>
-        <div style="margin-top: 10px; font-size: 12px; color: var(--text2); font-weight: 600; text-align: center;">
-          Say: "forward" · "back" · "left" · "right" · "stop"
+        <button class="voice-btn" id="voice-play-btn" onclick="toggleVoicePlay()">
+          🎙️ Tap &amp; Say a Command
+        </button>
+        <div class="voice-hint">Say: "forward" · "back" · "left" · "right" · "stop"</div>
+      </div>
+
+      <!-- Play log -->
+      <div class="play-log-card">
+        <div class="plc-header">Live Command Log</div>
+        <div class="cmd-log" id="play-log" style="border:none; border-radius:0; max-height:110px;">
+          <div class="log-line"><span class="log-t">09:41:00</span><span class="log-c"> MODE </span><span class="log-s">PLAY → ESP32 ✓</span></div>
         </div>
       </div>
 
-      <div>
-        <div class="cmd-label" style="padding:0; margin-bottom:8px;">Live Command Log</div>
-        <div class="cmd-log" id="play-log">
-          <div class="log-line"><span class="log-time">09:41:00</span><span class="log-cmd">MODE:</span><span class="log-status">PLAY → ESP32 ✓</span></div>
-        </div>
-      </div>
     </div>
   </div>
+</div>
 
-  <!-- ===== HISTORY SCREEN ===== -->
-  <div class="screen" id="history" style="background: var(--bg);">
-    <div class="screen-header">
-      <button class="back-btn" onclick="showScreen('home')">←</button>
-      <div class="screen-title">📋 Learning History</div>
-      <div style="margin-left:auto; font-size:12px; font-weight:700; color:var(--primary); cursor:pointer;" onclick="clearHistory()">Clear</div>
-    </div>
-    <div style="padding: 12px 16px 0; font-size: 13px; font-weight: 600; color: var(--text2); background: var(--surface); border-bottom: 1px solid var(--border);">
-      Parental monitoring view · All AI interactions logged
-    </div>
+<!-- ============================================================
+     HISTORY
+     ============================================================ -->
+<div class="screen" id="history">
+  <div class="app-header">
+    <div class="hdr-back" onclick="showScreen('home')">←</div>
+    <div class="hdr-title">📋 Learning History</div>
+    <span style="margin-left:auto; font-size:12px; font-weight:700; color:var(--coral); cursor:pointer;" onclick="showToast('History cleared')">Clear</span>
+  </div>
+  <div class="hist-filter">
+    <span>Parental monitoring · All AI interactions</span>
+  </div>
+  <div class="scroll-body">
     <div class="history-list" id="history-list">
-      <div class="history-session">
-        <div class="hs-header">
+      <div class="hist-session">
+        <div class="hs-hdr">
           <div class="hs-date">Today · March 22, 2026</div>
-          <div class="hs-count">3 Q&As</div>
+          <div class="hs-badge">3 Q&amp;As</div>
         </div>
         <div class="hs-pair">
           <div class="hs-q">Why is the sky blue?</div>
-          <div class="hs-a">The sky is blue due to Rayleigh scattering — blue light scatters more through air molecules than other colors in sunlight.</div>
+          <div class="hs-a">Because of Rayleigh scattering — blue light bounces off air molecules much more than other colors in sunlight.</div>
         </div>
         <div class="hs-pair">
           <div class="hs-q">How big is the Sun?</div>
-          <div class="hs-a">The Sun is about 1.4 million km wide — over 100 Earths could fit across it! It makes up 99.8% of our solar system's mass.</div>
+          <div class="hs-a">The Sun is about 1.4 million km wide — over 100 Earths could fit across it. It holds 99.8% of our solar system's mass!</div>
         </div>
         <div class="hs-pair">
           <div class="hs-q">What is photosynthesis?</div>
-          <div class="hs-a">Photosynthesis is how plants make food using sunlight, water, and CO₂. They produce glucose and release oxygen as a byproduct!</div>
+          <div class="hs-a">It's how plants make food using sunlight, water and CO₂. They produce glucose and release oxygen — that's why plants are so important!</div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- ===== SETTINGS SCREEN ===== -->
-  <div class="screen" id="settings" style="background: var(--bg);">
-    <div class="screen-header">
-      <button class="back-btn" onclick="showScreen('home')">←</button>
-      <div class="screen-title">⚙️ Settings</div>
-    </div>
-    <div class="settings-content">
-      <div class="api-note">
-        <strong>⚠️ Hackathon Note:</strong> Replace the API key below with your real Google Gemini key. The app sends questions to Gemini and returns answers via Bluetooth to the robot.
-      </div>
-
-      <div class="settings-section">
-        <h3>🤖 AI Configuration</h3>
-        <div class="setting-row" style="flex-direction:column; align-items:flex-start;">
-          <div class="setting-label">Gemini API Key</div>
-          <div class="setting-sub">Used for Study Mode responses</div>
-          <input class="settings-input" type="password" id="api-key-input" placeholder="AIza..." value="AIza••••••••••••••••••••" />
-        </div>
-        <div class="setting-row" style="flex-direction:column; align-items:flex-start; padding-top:12px;">
-          <div class="setting-label">AI Model</div>
-          <select class="settings-input" style="margin-top:8px; cursor:pointer;">
-            <option>gemini-2.0-flash (Fast · Recommended)</option>
-            <option>gemini-2.0-pro (More accurate)</option>
-          </select>
-        </div>
-        <div class="setting-row" style="flex-direction:column; align-items:flex-start; padding-top:12px;">
-          <div class="setting-label">System Prompt</div>
-          <div class="setting-sub">How CogniBuddy should behave</div>
-          <textarea class="settings-input" rows="3" style="resize:none; line-height:1.5;">You are CogniBuddy, a friendly educational robot for children. Give clear, fun, age-appropriate answers. Keep responses under 3 sentences.</textarea>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <h3>📡 Bluetooth / ESP32</h3>
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">Device Name</div>
-            <div class="setting-sub" id="bt-device-name">CogniBuddy-ESP32</div>
-          </div>
-          <div style="font-size:12px; font-weight:700; color:var(--success);" id="bt-conn-status">● Connected</div>
-        </div>
-        <div class="setting-row">
-          <div><div class="setting-label">Auto-reconnect</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="setting-row">
-          <div><div class="setting-label">Command Echo</div><div class="setting-sub">Log all BT commands</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <h3>👶 Child Settings</h3>
-        <div class="setting-row">
-          <div><div class="setting-label">Timestamps in chat</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="setting-row">
-          <div><div class="setting-label">Parental PIN</div><div class="setting-sub">Lock settings screen</div></div>
-          <div class="toggle" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="setting-row">
-          <div><div class="setting-label">Safe Mode</div><div class="setting-sub">Filter adult content</div></div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-        </div>
-      </div>
-
-      <button class="btn-primary" style="margin: 0;" onclick="saveSettings()">Save Settings ✓</button>
-    </div>
-  </div>
-
-  <!-- Toast -->
-  <div class="toast" id="toast"></div>
 </div>
 
+<!-- ============================================================
+     SETTINGS
+     ============================================================ -->
+<div class="screen" id="settings">
+  <div class="app-header">
+    <div class="hdr-back" onclick="showScreen('home')">←</div>
+    <div class="hdr-title">⚙️ Settings</div>
+  </div>
+  <div class="scroll-body">
+    <div class="settings-body">
+
+      <div class="warn-note">
+        <strong>⚠️ Hackathon Note:</strong> Paste your Google Gemini API key below. Get a free key at <strong>aistudio.google.com/apikey</strong>. Key starts with <strong>AIza…</strong>
+      </div>
+
+      <!-- Gemini config -->
+      <div class="settings-card">
+        <h3>🧠 Gemini AI Configuration</h3>
+        <div class="s-row col">
+          <div class="s-label">Gemini API Key</div>
+          <div class="s-sub">Powers Study Mode answers</div>
+          <input class="s-input" type="password" id="api-key-input" placeholder="AIza..." value="" />
+        </div>
+        <div class="s-row col">
+          <div class="s-label">Model</div>
+          <select class="s-select" id="model-select">
+            <option value="gemini-2.0-flash">gemini-2.0-flash (Fast · Recommended)</option>
+            <option value="gemini-2.0-pro">gemini-2.0-pro (More accurate)</option>
+            <option value="gemini-1.5-flash">gemini-1.5-flash (Lightweight)</option>
+          </select>
+        </div>
+        <div class="s-row col">
+          <div class="s-label">System Prompt</div>
+          <div class="s-sub">How CogniBuddy behaves</div>
+          <textarea class="s-textarea" id="system-prompt" rows="3">You are CogniBuddy, a friendly educational robot for children. Give clear, fun, age-appropriate answers. Keep responses under 3 sentences.</textarea>
+        </div>
+      </div>
+
+      <!-- Bluetooth -->
+      <div class="settings-card">
+        <h3>📡 Bluetooth / ESP32</h3>
+        <div class="s-row">
+          <div>
+            <div class="s-label">Device</div>
+            <div class="s-sub" id="s-device-name">CogniBuddy-ESP32</div>
+          </div>
+          <div style="font-size:12px; font-weight:700; color:var(--teal);" id="s-conn-status">● Connected</div>
+        </div>
+        <div class="s-row">
+          <div><div class="s-label">Auto-reconnect</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="s-row">
+          <div><div class="s-label">Command Echo</div><div class="s-sub">Log all BT commands</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+
+      <!-- Child settings -->
+      <div class="settings-card">
+        <h3>👶 Child &amp; Parent Settings</h3>
+        <div class="s-row">
+          <div><div class="s-label">Show timestamps in chat</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="s-row">
+          <div><div class="s-label">Safe Mode</div><div class="s-sub">Filter adult content</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="s-row">
+          <div><div class="s-label">Parental PIN Lock</div><div class="s-sub">Lock this settings screen</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+
+      <button class="btn-main teal" style="width:100%; margin:0;" onclick="saveSettings()">Save Settings ✓</button>
+      <button class="btn-main danger" style="width:100%; margin:0;" onclick="showScreen('bluetooth')">Reconnect Robot</button>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
 <script>
-  // ===== STATE =====
-  const state = {
-    connected: true,
-    selectedDevice: 'CogniBuddy-ESP32',
-    mode: 'study',
-    chatHistory: [],
-    playLog: []
-  };
+// ===================== STATE =====================
+const state = {
+  connected: true,
+  selectedDeviceId: null,
+  selectedDeviceName: 'CogniBuddy-ESP32',
+  mode: 'study'
+};
 
-  // ===== SCREEN NAVIGATION =====
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+// ===================== NAVIGATION =====================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function setNav(id) {
+  document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById('bnav-' + id);
+  if (el) el.classList.add('active');
+}
+
+function showHome() {
+  state.connected = true;
+  showScreen('home');
+  setNav('home');
+  addBtLog('CONNECT', state.selectedDeviceName + ' → Connected ✓');
+  showToast('🤖 Robot connected!');
+}
+
+// ===================== BLUETOOTH =====================
+function selectDevice(id, name, mac) {
+  document.querySelectorAll('.device-item').forEach(d => d.classList.remove('selected'));
+  document.getElementById(id).classList.add('selected');
+  state.selectedDeviceId = id;
+  state.selectedDeviceName = name;
+  document.getElementById('bt-connect-btn').disabled = false;
+  addBtLog('SELECT', name + ' selected');
+}
+
+function connectDevice() {
+  if (!state.selectedDeviceId) return;
+  const btn = document.getElementById('bt-connect-btn');
+  btn.textContent = 'Connecting…';
+  btn.disabled = true;
+  addBtLog('CONNECTING', 'Establishing BLE connection…');
+
+  setTimeout(() => {
+    const pill = document.getElementById('bt-status-pill');
+    pill.className = 'status-pill connected';
+    pill.innerHTML = '<div class="dot"></div> Connected';
+    addBtLog('SUCCESS', state.selectedDeviceName + ' connected ✓');
+    addBtLog('SEND', 'MODE:STUDY → ESP32');
+    btn.textContent = '✓ Connected!';
+    btn.style.background = 'var(--teal)';
+    btn.style.color = '#0D1117';
+
+    // Update settings panel
+    document.getElementById('s-device-name').textContent = state.selectedDeviceName;
+
+    setTimeout(showHome, 900);
+  }, 1500);
+}
+
+function addBtLog(cmd, status) {
+  const log = document.getElementById('bt-log');
+  const t = new Date().toTimeString().substring(0, 8);
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = `<span class="log-t">${t}</span><span class="log-c"> ${cmd} </span><span class="log-s">${status}</span>`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ===================== MODE SWITCH =====================
+function switchMode(mode) {
+  state.mode = mode;
+  const sBtn = document.getElementById('mbtn-study');
+  const pBtn = document.getElementById('mbtn-play');
+  sBtn.className = 'mode-btn';
+  pBtn.className = 'mode-btn';
+
+  if (mode === 'study') {
+    sBtn.className = 'mode-btn active-study';
+    document.getElementById('robot-state').textContent = 'Ready to Learn!';
+    document.getElementById('robot-mode-sub').textContent = 'Study Mode · Gemini AI';
+    document.getElementById('oled-display').textContent = '( ◠‿◠ )  STUDY';
+    sendBT('MODE:STUDY');
+  } else {
+    pBtn.className = 'mode-btn active-play';
+    document.getElementById('robot-state').textContent = "Let's Play!";
+    document.getElementById('robot-mode-sub').textContent = 'Play Mode · Motor Control';
+    document.getElementById('oled-display').textContent = '( •_• )  PLAY!';
+    sendBT('MODE:PLAY');
   }
+  showToast('Switched to ' + mode.charAt(0).toUpperCase() + mode.slice(1) + ' Mode');
+}
 
-  function showHome() {
-    state.connected = true;
-    showScreen('home');
-    showToast('Connected to ' + state.selectedDevice);
-    addBtLog('CONNECT', state.selectedDevice + ' → Connected ✓');
+// ===================== STUDY / GEMINI =====================
+function sendQuestion() {
+  const inp = document.getElementById('chat-input');
+  const q = inp.value.trim();
+  if (!q) return;
+  inp.value = '';
+  addChatMsg('user', q, '👤 You typed');
+  callGemini(q);
+}
+
+function simulateMic() {
+  const samples = [
+    'What is gravity?',
+    'How do volcanoes erupt?',
+    'Why do we dream?',
+    'What are black holes?',
+    'How does the brain work?',
+    'What is the water cycle?',
+    'Why do leaves change color?'
+  ];
+  const q = samples[Math.floor(Math.random() * samples.length)];
+  showToast('🎙️ Heard: "' + q + '"');
+  addChatMsg('user', q, '🎤 Via Microphone');
+  sendBT('OLED:THINKING');
+  callGemini(q);
+}
+
+function addChatMsg(role, text, meta) {
+  const area = document.getElementById('chat-area');
+  const typingRow = document.getElementById('typing-row');
+
+  const grp = document.createElement('div');
+  grp.className = 'chat-group ' + role;
+  grp.innerHTML = `
+    <div class="chat-who">${meta || (role === 'bot' ? '🤖 CogniBuddy' : '👤 You')}</div>
+    <div class="chat-bubble ${role}">${text}</div>
+  `;
+  area.insertBefore(grp, typingRow);
+  area.scrollTop = area.scrollHeight;
+}
+
+async function callGemini(question) {
+  document.getElementById('typing-row').classList.add('show');
+  document.getElementById('thinking-bar').classList.add('show');
+  sendBT('OLED:THINKING');
+
+  const apiKey     = (document.getElementById('api-key-input')?.value || '').trim();
+  const model      = document.getElementById('model-select')?.value || 'gemini-2.0-flash';
+  const sysPrompt  = document.getElementById('system-prompt')?.value ||
+    'You are CogniBuddy, a friendly educational robot for children. Give clear, fun, age-appropriate answers. Keep responses under 3 sentences.';
+
+  if (apiKey && apiKey.startsWith('AIza')) {
+    // ── LIVE GEMINI CALL ──
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: sysPrompt }] },
+            contents: [{ role: 'user', parts: [{ text: question }] }],
+            generationConfig: { maxOutputTokens: 150, temperature: 0.7 }
+          })
+        }
+      );
+      const data = await res.json();
+      const answer = data.candidates?.[0]?.content?.parts?.[0]?.text
+        || 'Sorry, I could not get an answer right now!';
+      showAIResponse(answer, question);
+    } catch (e) {
+      showAIResponse('Oops! Could not reach Gemini. Check your API key and internet connection.', question);
+    }
+  } else {
+    // ── DEMO / SIMULATED RESPONSES ──
+    const demos = {
+      gravity:     'Gravity is a force that pulls objects toward each other! The heavier the object, the stronger its pull — that\'s why Earth keeps us on the ground. 🌍',
+      volcano:     'Volcanoes erupt when hot magma underground builds up pressure and pushes through the surface. Think of it like shaking a fizzy drink and opening it! 🌋',
+      dream:       'Dreams happen during REM sleep when your brain stays very active. Scientists think dreams help process memories and emotions from your day. ✨',
+      'black hole': 'A black hole is a spot in space where gravity is so strong that even light can\'t escape. They form when giant stars collapse under their own weight! 🌌',
+      brain:       'Your brain has around 86 billion neurons firing electrical signals to each other. It controls everything you think, feel, and do — the ultimate supercomputer! 🧠',
+      'water cycle': 'Water evaporates from oceans into clouds, then falls as rain or snow, flows back into rivers and oceans, and the cycle repeats forever! 💧',
+      leaves:      'Leaves change color because trees stop making green chlorophyll in autumn. The hidden yellow and orange pigments finally get to show — like a secret reveal! 🍂'
+    };
+    const key = Object.keys(demos).find(k => question.toLowerCase().includes(k));
+    await delay(1800);
+    showAIResponse(
+      key ? demos[key] : `That's a wonderful question about "${question}"! There's some really fascinating science behind it. Keep exploring — curiosity is the best superpower! 🌟`,
+      question
+    );
   }
+}
 
-  function showNav(active) {
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+function showAIResponse(answer, question) {
+  document.getElementById('typing-row').classList.remove('show');
+  document.getElementById('thinking-bar').classList.remove('show');
+
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  addChatMsg('bot', answer, `🤖 CogniBuddy · ${time}`);
+
+  sendBT('SPEAK:' + answer.substring(0, 120));
+  sendBT('OLED:SPEAKING');
+
+  document.getElementById('oled-display').textContent = '( ^_^ )  SPEAKING';
+  setTimeout(() => {
+    document.getElementById('oled-display').textContent = '( ◠‿◠ )  READY';
+  }, 3000);
+
+  // Log to history
+  addToHistory(question, answer);
+}
+
+function addToHistory(q, a) {
+  if (!q || !a) return;
+  const list = document.getElementById('history-list');
+  const session = list.querySelector('.hist-session');
+  if (session) {
+    const badge = session.querySelector('.hs-badge');
+    const n = parseInt(badge.textContent) + 1;
+    badge.textContent = n + ' Q&As';
+    const pair = document.createElement('div');
+    pair.className = 'hs-pair';
+    pair.innerHTML = `<div class="hs-q">${q}</div><div class="hs-a">${a}</div>`;
+    session.appendChild(pair);
   }
+}
 
-  // ===== BLUETOOTH =====
-  let selectedDeviceEl = null;
+// ===================== PLAY CONTROLS =====================
+function sendCmd(cmd) {
+  document.getElementById('last-cmd').textContent = cmd;
+  sendBT(cmd);
+  addPlayLog(cmd);
+}
 
-  function selectDevice(el, name) {
-    if (selectedDeviceEl) selectedDeviceEl.classList.remove('selected');
-    el.classList.add('selected');
-    selectedDeviceEl = el;
-    state.selectedDevice = name;
-    document.getElementById('connect-btn').disabled = false;
-    addBtLog('SELECT', name + ' selected');
-  }
+function addPlayLog(cmd) {
+  const log = document.getElementById('play-log');
+  const t = new Date().toTimeString().substring(0, 8);
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = `<span class="log-t">${t}</span><span class="log-c"> ${cmd} </span><span class="log-s">→ ESP32 ✓</span>`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
 
-  function connectDevice() {
-    if (!selectedDeviceEl) return;
-    const btn = document.getElementById('connect-btn');
-    btn.textContent = 'Connecting...';
-    btn.disabled = true;
-    addBtLog('CONNECTING', 'Establishing BLE connection...');
+let voiceActive = false;
+function toggleVoicePlay() {
+  voiceActive = !voiceActive;
+  const btn = document.getElementById('voice-play-btn');
+  if (voiceActive) {
+    btn.classList.add('listening');
+    btn.textContent = '🔴 Listening…';
     setTimeout(() => {
-      state.connected = true;
-      const statusEl = document.getElementById('bt-status');
-      statusEl.innerHTML = '<div class="status-dot"></div> Connected';
-      statusEl.style.background = 'rgba(16,185,129,0.2)';
-      statusEl.style.color = '#6EE7B7';
-      addBtLog('SUCCESS', state.selectedDevice + ' connected ✓');
-      addBtLog('SEND', 'MODE:STUDY → ESP32');
-      btn.textContent = '✓ Connected!';
-      btn.style.background = '#10B981';
-      setTimeout(() => {
-        showHome();
-        showToast('🤖 Robot connected!');
-      }, 800);
-    }, 1500);
-  }
-
-  function addBtLog(cmd, status) {
-    const log = document.getElementById('bt-log');
-    const now = new Date();
-    const time = now.toTimeString().substring(0,8);
-    const line = document.createElement('div');
-    line.className = 'log-line';
-    line.innerHTML = `<span class="log-time">${time}</span><span class="log-cmd">${cmd}</span><span class="log-status">${status}</span>`;
-    log.appendChild(line);
-    log.scrollTop = log.scrollHeight;
-  }
-
-  // ===== MODE SWITCHING =====
-  function switchMode(mode) {
-    state.mode = mode;
-    const studyBtn = document.getElementById('study-btn');
-    const playBtn = document.getElementById('play-btn');
-    studyBtn.classList.remove('active', 'study', 'play');
-    playBtn.classList.remove('active', 'study', 'play');
-    if (mode === 'study') {
-      studyBtn.classList.add('active', 'study');
-      document.getElementById('robot-state-text').textContent = 'Ready to Learn!';
-      document.getElementById('robot-mode-text').textContent = 'Study Mode Active';
-      document.getElementById('oled-preview').textContent = '( ◠‿◠ )  STUDY';
-      sendBT('MODE:STUDY');
-    } else {
-      playBtn.classList.add('active', 'play');
-      document.getElementById('robot-state-text').textContent = "Let's Play!";
-      document.getElementById('robot-mode-text').textContent = 'Play Mode Active';
-      document.getElementById('oled-preview').textContent = '( •_• )  PLAY!';
-      sendBT('MODE:PLAY');
-    }
-    showToast('Mode: ' + mode.charAt(0).toUpperCase() + mode.slice(1));
-  }
-
-  // ===== STUDY / AI CHAT =====
-  function sendQuestion() {
-    const input = document.getElementById('chat-input');
-    const q = input.value.trim();
-    if (!q) return;
-    input.value = '';
-    addChatMessage('user', q, 'You typed');
-    callAI(q);
-  }
-
-  function simulateMic() {
-    const samples = [
-      "What is gravity?",
-      "How do volcanoes erupt?",
-      "Why do we dream?",
-      "What are black holes?",
-      "How does the brain work?"
-    ];
-    const q = samples[Math.floor(Math.random() * samples.length)];
-    showToast('🎙️ Heard: "' + q + '"');
-    addChatMessage('user', q, '🎤 Via Microphone');
-    sendBT('OLED:THINKING');
-    callAI(q);
-  }
-
-  function addChatMessage(role, text, meta) {
-    const container = document.getElementById('chat-container');
-    const group = document.createElement('div');
-    group.className = 'chat-group ' + role;
-    group.innerHTML = `
-      <div class="chat-meta">${meta || (role === 'bot' ? '🤖 CogniBuddy' : '👤 You')}</div>
-      <div class="chat-bubble ${role}">${text}</div>
-    `;
-    container.appendChild(group);
-    container.scrollTop = container.scrollHeight;
-
-    if (role === 'user' || role === 'bot') {
-      state.chatHistory.push({ role, text, time: new Date().toLocaleTimeString() });
-    }
-  }
-
-  async function callAI(question) {
-    document.getElementById('typing-indicator').classList.add('show');
-    document.getElementById('ai-thinking').classList.add('show');
-    sendBT('OLED:THINKING');
-
-    const apiKey = document.getElementById('api-key-input')?.value || '';
-    const systemPrompt = 'You are CogniBuddy, a friendly educational robot for children. Give clear, fun, age-appropriate answers. Keep responses under 3 sentences.';
-
-    if (apiKey && apiKey.startsWith('AIza') && !apiKey.includes('••')) {
-      try {
-        const res = await fetch(
-          'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              system_instruction: { parts: [{ text: systemPrompt }] },
-              contents: [{ role: 'user', parts: [{ text: question }] }],
-              generationConfig: { maxOutputTokens: 150, temperature: 0.7 }
-            })
-          }
-        );
-        const data = await res.json();
-        const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not understand that!';
-        showAIResponse(answer);
-      } catch (e) {
-        showAIResponse('Oops! Could not reach Gemini. Check your connection and API key!');
-      }
-    } else {
-      // Simulated responses for demo
-      const responses = {
-        'gravity': 'Gravity is a force that pulls objects together! The bigger the object, the stronger the pull. That\'s why Earth keeps us on the ground and why the Moon orbits us. 🌍',
-        'volcano': 'Volcanoes erupt when hot melted rock called magma builds up underground! The pressure pushes it up through a vent to the surface. It\'s like opening a shaken soda bottle! 🌋',
-        'dream': 'Dreams happen during the REM sleep stage when your brain is very active! Scientists think they help process memories and emotions from your day. ✨',
-        'black hole': 'A black hole is a region in space where gravity is so strong that nothing — not even light — can escape it! They form when massive stars collapse. 🌌',
-        'brain': 'Your brain has about 86 billion neurons that send electrical signals to each other! It controls everything you think, feel, and do — like the ultimate computer. 🧠'
-      };
-      const key = Object.keys(responses).find(k => question.toLowerCase().includes(k));
-      setTimeout(() => {
-        showAIResponse(key ? responses[key] : `That's a great question about "${question}"! The answer involves some really fascinating science. Let me explain it step by step so it's easy to understand! 🌟`);
-      }, 1800);
-    }
-  }
-
-  function showAIResponse(answer) {
-    document.getElementById('typing-indicator').classList.remove('show');
-    document.getElementById('ai-thinking').classList.remove('show');
-    addChatMessage('bot', answer, '🤖 CogniBuddy · ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}));
-    sendBT('SPEAK:' + answer.substring(0, 100));
-    sendBT('OLED:SPEAKING');
-    document.getElementById('oled-preview').textContent = '( ^_^ )  SPEAKING';
-    setTimeout(() => {
-      document.getElementById('oled-preview').textContent = '( ◠‿◠ )  READY';
-    }, 3000);
-    addToHistory({ question: document.getElementById('chat-container').querySelector('.chat-group.user:last-of-type .chat-bubble')?.textContent, answer });
-  }
-
-  function addToHistory(pair) {
-    const list = document.getElementById('history-list');
-    const today = list.querySelector('.history-session');
-    if (today && pair.question) {
-      const count = today.querySelector('.hs-count');
-      const num = parseInt(count.textContent) + 1;
-      count.textContent = num + ' Q&As';
-      const pairDiv = document.createElement('div');
-      pairDiv.className = 'hs-pair';
-      pairDiv.innerHTML = `<div class="hs-q">${pair.question}</div><div class="hs-a">${pair.answer}</div>`;
-      today.appendChild(pairDiv);
-    }
-  }
-
-  function clearHistory() {
-    showToast('History cleared');
-  }
-
-  // ===== PLAY COMMANDS =====
-  function sendCmd(cmd) {
-    document.getElementById('last-cmd').textContent = cmd;
-    sendBT(cmd);
-    addPlayLog(cmd);
-  }
-
-  function addPlayLog(cmd) {
-    const log = document.getElementById('play-log');
-    const now = new Date().toTimeString().substring(0,8);
-    const line = document.createElement('div');
-    line.className = 'log-line';
-    line.innerHTML = `<span class="log-time">${now}</span><span class="log-cmd">${cmd}</span><span class="log-status">→ ESP32 ✓</span>`;
-    log.appendChild(line);
-    log.scrollTop = log.scrollHeight;
-  }
-
-  let voicePlaying = false;
-  function toggleVoicePlay() {
-    voicePlaying = !voicePlaying;
-    const btn = document.getElementById('voice-play-btn');
-    if (voicePlaying) {
-      btn.classList.add('listening');
-      btn.textContent = '🔴 Listening... (say a command)';
-      setTimeout(() => {
-        const cmds = ['MOVE_FORWARD', 'TURN_LEFT', 'TURN_RIGHT', 'MOVE_BACKWARD', 'STOP'];
-        const cmd = cmds[Math.floor(Math.random() * cmds.length)];
-        showToast('🎙️ Heard: "' + cmd.toLowerCase().replace('_', ' ') + '"');
-        sendCmd(cmd);
-        voicePlaying = false;
-        btn.classList.remove('listening');
-        btn.textContent = '🎙️ Tap & Say a Command';
-      }, 2500);
-    } else {
+      const cmds = ['MOVE_FORWARD', 'TURN_LEFT', 'TURN_RIGHT', 'MOVE_BACKWARD', 'STOP'];
+      const cmd  = cmds[Math.floor(Math.random() * cmds.length)];
+      showToast('🎙️ Heard: "' + cmd.toLowerCase().replace('_', ' ') + '"');
+      sendCmd(cmd);
+      voiceActive = false;
       btn.classList.remove('listening');
       btn.textContent = '🎙️ Tap & Say a Command';
-    }
+    }, 2500);
+  } else {
+    btn.classList.remove('listening');
+    btn.textContent = '🎙️ Tap & Say a Command';
   }
+}
 
-  // ===== BLUETOOTH SEND =====
-  function sendBT(command) {
-    console.log('[BT SEND]', command);
-    // In MIT App Inventor: BluetoothClient1.SendText(command + "\n")
-  }
+// ===================== BLUETOOTH SEND =====================
+function sendBT(command) {
+  console.log('[BT TX]', command);
+  // MIT App Inventor:  BluetoothClient1.SendText(command + "\n")
+  // Flutter:           bluetoothConnection.output.add(utf8.encode(command + "\n"))
+  // React Native:      bleManager.writeCharacteristicWithResponse(...)
+}
 
-  // ===== SETTINGS =====
-  function saveSettings() {
-    showToast('Settings saved ✓');
-  }
+// ===================== SETTINGS =====================
+function saveSettings() {
+  showToast('Settings saved ✓');
+}
 
-  // ===== TOAST =====
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
+// ===================== HELPERS =====================
+const delay = ms => new Promise(r => setTimeout(r, ms));
 
-  // Enter key for chat
-  document.getElementById('chat-input').addEventListener('keypress', e => {
-    if (e.key === 'Enter') sendQuestion();
-  });
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// Enter key → send
+document.getElementById('chat-input').addEventListener('keypress', e => {
+  if (e.key === 'Enter') sendQuestion();
+});
 </script>
 </body>
 </html>
